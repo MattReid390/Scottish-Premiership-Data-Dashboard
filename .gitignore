@@ -35,6 +35,10 @@ logs/
 .coverage
 htmlcov/
 
+# Type checking / linting caches
+.mypy_cache/
+.ruff_cache/
+
 # Notebooks
 .ipynb_checkpoints/
 
