@@ -11,7 +11,7 @@ This roadmap sequences implementation into phases. It reflects planning intent a
 ## Phase 1 — MVP
 
 - [x] `src/database/`: schema models and initial Alembic migration for `season`, `team`, `venue`, `match`, `ingestion_log`.
-- [ ] `src/ingestion/`: fetcher for one historical source (football-data.co.uk CSV) to backfill 2–3 past seasons.
+- [x] `src/ingestion/`: fetcher for one historical source (football-data.co.uk CSV) to backfill 2–3 past seasons.
 - [ ] `src/processing/`: validation, team-name normalization, and upsert-based loading.
 - [ ] `src/analysis/`: league table engine (current + point-in-time), form guide calculation.
 - [ ] `src/dashboard/`: Overview/League Table page and Team Profile page.
