@@ -1,0 +1,103 @@
+# Maintained team roster and name-alias mapping (see
+# docs/data_ingestion.md section 4.3 and docs/environment_configuration.md
+# section 6). Unlike config.yaml, this file is version-controlled: it holds
+# maintained reference data, not secrets or per-environment settings.
+#
+# Each top-level key is the canonical_key stored on team.canonical_key.
+# `aliases` lists every raw spelling seen across ingestion sources that
+# should resolve to that team; an unrecognised name is treated as an error
+# by src/processing/team_aliases.py rather than silently creating a
+# duplicate team.
+#
+# The 13 teams below are every team that appeared in the football-data.co.uk
+# Scottish Premiership CSVs for the 2022-23, 2023-24, and 2024-25 seasons
+# (verified directly against the fetched raw data, not from memory) -
+# reflecting the promotion/relegation of Dundee, Dundee United, and
+# Livingston across those seasons. New teams (e.g. after future
+# promotion/relegation, or aliases from a newly added source) should be
+# added here as they are encountered.
+
+aberdeen:
+  display_name: "Aberdeen"
+  aliases:
+    - "Aberdeen"
+    - "Aberdeen FC"
+
+celtic:
+  display_name: "Celtic"
+  aliases:
+    - "Celtic"
+    - "Celtic FC"
+
+dundee:
+  display_name: "Dundee"
+  aliases:
+    - "Dundee"
+    - "Dundee FC"
+
+dundee_united:
+  display_name: "Dundee United"
+  aliases:
+    - "Dundee United"
+    - "Dundee Utd"
+    - "Dundee United FC"
+
+hearts:
+  display_name: "Heart of Midlothian"
+  aliases:
+    - "Hearts"
+    - "Heart of Midlothian"
+    - "Heart of Midlothian FC"
+
+hibernian:
+  display_name: "Hibernian"
+  aliases:
+    - "Hibernian"
+    - "Hibs"
+    - "Hibernian FC"
+
+kilmarnock:
+  display_name: "Kilmarnock"
+  aliases:
+    - "Kilmarnock"
+    - "Kilmarnock FC"
+
+livingston:
+  display_name: "Livingston"
+  aliases:
+    - "Livingston"
+    - "Livingston FC"
+
+motherwell:
+  display_name: "Motherwell"
+  aliases:
+    - "Motherwell"
+    - "Motherwell FC"
+
+rangers:
+  display_name: "Rangers"
+  aliases:
+    - "Rangers"
+    - "Rangers FC"
+    - "Glasgow Rangers"
+
+ross_county:
+  display_name: "Ross County"
+  aliases:
+    - "Ross County"
+    - "Ross County FC"
+
+st_johnstone:
+  display_name: "St Johnstone"
+  aliases:
+    - "St Johnstone"
+    - "St. Johnstone"
+    - "Saint Johnstone"
+
+st_mirren:
+  display_name: "St Mirren"
+  aliases:
+    - "St Mirren"
+    - "St. Mirren"
+    - "St. Mirren FC"
+    - "Saint Mirren"
