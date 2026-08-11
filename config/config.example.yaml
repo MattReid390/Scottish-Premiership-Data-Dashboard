@@ -1,0 +1,43 @@
+# Copy this file to config/config.yaml and adjust as needed.
+# Non-secret application settings only — see .env.example for secrets.
+# See docs/environment_configuration.md (section 5) and
+# docs/analysis_methodology.md for how each setting is used.
+
+season:
+  current_label: "2025-26"
+  # Seasons to include when running a historical backfill ingestion.
+  backfill_labels:
+    - "2022-23"
+    - "2023-24"
+    - "2024-25"
+  # Matchweek at which the Premiership's top-six/bottom-six split occurs.
+  split_matchweek: 33
+
+table:
+  # Positions (1-indexed) highlighted as European qualification places.
+  european_qualification_positions: [1, 2, 3]
+  # Positions highlighted as relegation / relegation play-off places.
+  relegation_positions: [11, 12]
+
+form:
+  # Number of most recent matches used for the rolling form guide.
+  window_size: 5
+
+ratings:
+  elo:
+    initial_rating: 1500
+    k_factor: 20
+    home_advantage_offset: 60
+    season_carry_over_factor: 0.75
+
+ingestion:
+  retry:
+    max_attempts: 3
+    backoff_base_seconds: 2
+  request_throttle:
+    delay_seconds_between_requests: 1.0
+  quarantine_dir: "data/raw/_quarantine"
+
+logging:
+  rotate_max_bytes: 1048576
+  rotate_backup_count: 5

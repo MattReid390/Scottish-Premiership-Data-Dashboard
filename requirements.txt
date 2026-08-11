@@ -1,0 +1,24 @@
+# Runtime dependencies for the Scottish Premiership Data Dashboard.
+# Versions are illustrative pins for the planned tech stack (see docs/architecture.md
+# section 6); exact versions should be finalized when implementation begins.
+
+# Data handling
+pandas>=2.2,<3.0
+requests>=2.31,<3.0
+beautifulsoup4>=4.12,<5.0
+lxml>=5.1,<6.0
+
+# Validation
+pandera>=0.19,<1.0
+
+# Database
+SQLAlchemy>=2.0,<3.0
+alembic>=1.13,<2.0
+
+# Configuration
+python-dotenv>=1.0,<2.0
+PyYAML>=6.0,<7.0
+
+# Dashboard & visualisation
+streamlit>=1.35,<2.0
+plotly>=5.22,<6.0

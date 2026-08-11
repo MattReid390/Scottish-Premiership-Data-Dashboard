@@ -1,0 +1,11 @@
+[project]
+name = "scottish-premiership-data-dashboard"
+version = "0.1.0"
+description = "A Python data pipeline and interactive dashboard for Scottish Premiership football results, standings, and trends."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+
+# This file currently declares project metadata only, for planning and packaging
+# purposes (see docs/environment_configuration.md). Runtime and development
+# dependencies are tracked in requirements.txt / requirements-dev.txt.

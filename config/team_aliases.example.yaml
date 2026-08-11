@@ -1,0 +1,31 @@
+# Copy this file to config/team_aliases.yaml and maintain it as new source-specific
+# name variants are encountered (see docs/data_ingestion.md, section 4.3, and
+# docs/environment_configuration.md, section 6).
+#
+# Each top-level key is the canonical_key stored on the `team` row; the `aliases`
+# list enumerates every raw spelling seen across ingestion sources that should
+# resolve to that team. Entries below are illustrative examples of the mapping
+# pattern, not a maintained current roster — populate the real 12-team list for
+# the active season during Phase 1 implementation (see docs/roadmap.md).
+
+celtic:
+  display_name: "Celtic"
+  aliases:
+    - "Celtic"
+    - "Celtic FC"
+    - "CELTIC"
+
+rangers:
+  display_name: "Rangers"
+  aliases:
+    - "Rangers"
+    - "Rangers FC"
+    - "Glasgow Rangers"
+
+st_mirren:
+  display_name: "St Mirren"
+  aliases:
+    - "St Mirren"
+    - "St. Mirren"
+    - "St. Mirren FC"
+    - "Saint Mirren"
