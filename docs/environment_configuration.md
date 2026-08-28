@@ -18,13 +18,16 @@ Dependencies are declared in two files at the repository root:
 
 `pyproject.toml` holds project metadata (name, description, Python version constraint) for packaging/tooling purposes. Dependencies are pinned to compatible-release version ranges to balance reproducibility with the ability to receive patch updates.
 
-### Planned local setup sequence
+### Local setup sequence
 
 1. Create a virtual environment (`venv` or `conda`).
-2. Install runtime dependencies from `requirements.txt`.
-3. Install development dependencies from `requirements-dev.txt` (for contributors).
-4. Copy `.env.example` → `.env` and fill in local secrets.
-5. Copy `config/config.example.yaml` → `config/config.yaml` and adjust non-secret settings.
+2. Install runtime dependencies from `requirements.txt` (or `requirements-dev.txt`, which layers testing/linting tools on top, for contributors).
+3. Copy `.env.example` → `.env` and fill in local secrets.
+4. Copy `config/config.example.yaml` → `config/config.yaml` and adjust non-secret settings. (`config/team_aliases.yaml` needs no copying — unlike the two files above, it's committed directly; see section 6.)
+5. Run `alembic upgrade head` to create the schema in the local SQLite database.
+6. Run `python -m src.ingestion.backfill_historical` to fetch the seasons configured in `config.yaml`'s `season.backfill_labels` into `data/raw/`.
+7. Run `python -m src.processing.run_pipeline` to validate, normalize, and load that raw data into the database.
+8. Run `streamlit run src/dashboard/app.py` to launch the dashboard.
 
 ## 3. Configuration Files
 
@@ -91,7 +94,9 @@ A fresh clone should be able to go from zero to a running dashboard by:
 
 1. Installing pinned dependencies from `requirements.txt`.
 2. Filling in `.env` and `config/config.yaml` from their example templates.
-3. Running the (future) ingestion entry point to populate the local database.
-4. Running the (future) dashboard entry point.
+3. Running `alembic upgrade head` to create the schema.
+4. Running `python -m src.ingestion.backfill_historical` to fetch raw data.
+5. Running `python -m src.processing.run_pipeline` to load it into the database.
+6. Running `streamlit run src/dashboard/app.py` to launch the dashboard.
 
-No manual database seeding or hand-edited data files are required at any step.
+No manual database seeding or hand-edited data files are required at any step. Verified end-to-end from a genuinely fresh `git clone` (not just this working directory) as part of closing out Phase 1 — see `docs/roadmap.md`.

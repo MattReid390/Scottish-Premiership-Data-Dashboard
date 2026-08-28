@@ -16,7 +16,7 @@ This roadmap sequences implementation into phases. It reflects planning intent a
 - [x] `src/analysis/`: league table engine (current + point-in-time), form guide calculation.
 - [x] `src/dashboard/`: Overview/League Table page and Team Profile page.
 - [x] `tests/`: unit tests for table computation and form guide; integration test for the end-to-end fixture pipeline.
-- [ ] Local setup verified against the reproducibility checklist in [environment_configuration.md](environment_configuration.md#10-reproducibility-checklist).
+- [x] Local setup verified against the reproducibility checklist in [environment_configuration.md](environment_configuration.md#10-reproducibility-checklist).
 
 ## Phase 2 — Enhancements
 
