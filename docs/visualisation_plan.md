@@ -56,18 +56,21 @@ Charts are rendered with **Plotly** (interactive) as the default, with **Altair*
 
 **Purpose**: browse and filter individual fixtures.
 
-- Filterable table (season, date range, team, venue, result type) of all matches.
-- Row expansion to view match detail (score, venue, matchweek, and events if `match_event` data is available — see [database_schema.md](database_schema.md#35-match_event-stretch)).
-- Goals-per-matchweek trend chart across the league as a whole (league-wide scoring trend).
+- Filterable table (season, date range, team, result type) of all matches.
+- Goals trend chart across the league as a whole (league-wide scoring trend).
+
+**Implementation status (Phase 2):** built without a `Venue` filter or row-expansion match detail. No ingested source (football-data.co.uk or spfl.co.uk) provides venue data, and `match_event` doesn't exist yet (Phase 3, §6 above) so there's nothing further to expand a row into - both are natural follow-ons once those data gaps close, not omissions of the filtering/trend functionality itself.
 
 ### 3.4 Trends & Analytics
 
 **Purpose**: season-wide and cross-season statistical views.
 
-- Cumulative points progression: multi-line chart, one line per team, across matchweeks (the signature "league season race" chart).
-- League position over time: multi-line chart of `position` by matchweek.
-- Rating comparison: Elo or expected-points trend lines, selectable subset of teams to avoid clutter (default: top 6 by current position).
+- Cumulative points progression: multi-line chart, one line per team (the signature "league season race" chart).
+- League position over time: multi-line chart of `position`.
+- Rating comparison: Elo trend lines, selectable subset of teams to avoid clutter (default: top 6 by current position).
 - Cross-season comparator: a chosen team's points-per-game across multiple seasons, bar chart.
+
+**Implementation status (Phase 2):** "by matchweek" above is implemented as "by match date / that team's own match number" instead - see [analysis_methodology.md](analysis_methodology.md#22-point-in-time-reconstruction)'s note that `match.matchweek` is `NULL` for every source ingested so far. Rating comparison charts Elo only; expected-points is a single per-team summary figure (see [analysis_methodology.md](analysis_methodology.md#62-expected-points-simple-model)), not something with a meaningful trend line to chart.
 
 ### 3.5 Head-to-Head Comparison
 
@@ -77,6 +80,8 @@ Charts are rendered with **Plotly** (interactive) as the default, with **Altair*
 - Summary stat tiles: total meetings, wins each, draws, aggregate goals.
 - Recent-meetings table (most recent N fixtures with scorelines).
 - Simple win/draw/loss share visualised as a stacked bar.
+
+Scoped across every loaded season (not one season at a time) - head-to-head history is inherently cross-season, unlike the other pages.
 
 ### 3.6 Data Quality / Admin Page
 
