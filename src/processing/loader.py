@@ -18,12 +18,29 @@ from sqlalchemy.orm import Session
 from src.database.models import Match, Season, Team
 from src.processing.normalize import NormalizedMatch
 
+# Lower number = higher priority. See docs/data_ingestion.md section 2,
+# "Source priority for conflict resolution": SPFL official is authoritative
+# for current-season results; football-data.co.uk is used for historical
+# backfill and as a fallback. An unlisted source is treated as lowest
+# priority, so a newly added source without an explicit ranking can never
+# silently clobber an already-trusted row.
+SOURCE_PRIORITY: dict[str, int] = {
+    "spfl.co.uk": 0,
+    "football-data.co.uk": 1,
+}
+_UNKNOWN_SOURCE_PRIORITY = 99
+
+
+def _source_priority(source: str) -> int:
+    return SOURCE_PRIORITY.get(source, _UNKNOWN_SOURCE_PRIORITY)
+
 
 @dataclass
 class LoadSummary:
     inserted: int = 0
     updated: int = 0
     unchanged: int = 0
+    skipped_lower_priority: int = 0
 
 
 def get_or_create_season(
@@ -99,6 +116,15 @@ def upsert_match(
             )
         )
         summary.inserted += 1
+        return
+
+    if normalized.source != existing.source and _source_priority(
+        normalized.source
+    ) > _source_priority(existing.source):
+        # Incoming data is from a strictly lower-priority source than
+        # what's already recorded for this match; don't let it overwrite a
+        # higher-priority source's data (docs/data_ingestion.md section 2).
+        summary.skipped_lower_priority += 1
         return
 
     changed = (

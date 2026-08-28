@@ -9,11 +9,13 @@
 # by src/processing/team_aliases.py rather than silently creating a
 # duplicate team.
 #
-# The 13 teams below are every team that appeared in the football-data.co.uk
-# Scottish Premiership CSVs for the 2022-23, 2023-24, and 2024-25 seasons
-# (verified directly against the fetched raw data, not from memory) -
-# reflecting the promotion/relegation of Dundee, Dundee United, and
-# Livingston across those seasons. New teams (e.g. after future
+# Most of the teams below appeared in the football-data.co.uk Scottish
+# Premiership CSVs for the 2022-23, 2023-24, and 2024-25 seasons (verified
+# directly against the fetched raw data, not from memory) - reflecting the
+# promotion/relegation of Dundee, Dundee United, and Livingston across
+# those seasons. Falkirk was added when building the spfl.co.uk fetcher
+# (Phase 2), verified newly promoted to the current Premiership season
+# directly against the live site. New teams (e.g. after future
 # promotion/relegation, or aliases from a newly added source) should be
 # added here as they are encountered.
 
@@ -41,6 +43,12 @@ dundee_united:
     - "Dundee United"
     - "Dundee Utd"
     - "Dundee United FC"
+
+falkirk:
+  display_name: "Falkirk"
+  aliases:
+    - "Falkirk"
+    - "Falkirk FC"
 
 hearts:
   display_name: "Heart of Midlothian"

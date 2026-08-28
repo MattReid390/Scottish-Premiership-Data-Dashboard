@@ -4,12 +4,13 @@
 # docs/analysis_methodology.md for how each setting is used.
 
 season:
-  current_label: "2025-26"
+  current_label: "2026-27"
   # Seasons to include when running a historical backfill ingestion.
   backfill_labels:
     - "2022-23"
     - "2023-24"
     - "2024-25"
+    - "2025-26"
   # Matchweek at which the Premiership's top-six/bottom-six split occurs.
   split_matchweek: 33
 

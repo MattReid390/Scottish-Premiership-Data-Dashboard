@@ -1,0 +1,29 @@
+# Maintained mapping from team.canonical_key (see config/team_aliases.yaml)
+# to spfl.co.uk's URL slug for that club's results page
+# (https://spfl.co.uk/clubs/<slug>/results). Version-controlled reference
+# data, not a secret - same rationale as team_aliases.yaml.
+#
+# Lists only clubs currently in the Premiership: spfl.co.uk's per-club
+# results widget only shows a club's most recent few results/fixtures
+# across ALL competitions it plays in (league, cups, etc.), so the
+# ingestion fetcher needs to know which 12 clubs to check and filters each
+# club's entries down to the ones whose competition title contains
+# "Premiership" (see docs/data_ingestion.md section 2).
+#
+# Verified directly against the live site (not from memory) while building
+# this fetcher - see docs/roadmap.md Phase 2. When the Premiership roster
+# changes (promotion/relegation), update this file; an unlisted current
+# club is simply never checked, not an error.
+
+aberdeen: aberdeen
+celtic: celtic
+dundee: dundee
+dundee_united: dundee-united
+falkirk: falkirk
+hearts: heart-of-midlothian
+hibernian: hibernian
+kilmarnock: kilmarnock
+motherwell: motherwell
+rangers: rangers
+st_johnstone: st-johnstone
+st_mirren: st-mirren
