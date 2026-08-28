@@ -70,6 +70,24 @@ Every run writes a row to `ingestion_log` recording source, start/end time, stat
 
 No live/real-time (in-match) updates are planned for the MVP; the dashboard reflects results as of the last completed ingestion run.
 
+**Implementation (Phase 2):** `src/run_daily_ingestion.py` (`python -m src.run_daily_ingestion`) is the single entry point for the daily in-season job - it runs the SPFL fetch and processing pipeline back to back and exits non-zero if the fetch fails outright, so a scheduler's own failure/retry handling can act on it. Historical backfill stays a separate, manual pair of commands (`python -m src.ingestion.backfill_historical` then `python -m src.processing.run_pipeline`), per the cadence table above.
+
+- **Windows (Task Scheduler):** `scripts/run_daily_ingestion.ps1` wraps the entry point - it resolves the project root from its own location and calls the venv's `python.exe` directly, so it works regardless of Task Scheduler's working directory or shell profile. Register it with:
+
+  ```powershell
+  schtasks /Create /TN "ScottishPremiershipDashboard-DailyIngestion" /TR "powershell.exe -ExecutionPolicy Bypass -File \"<project-path>\scripts\run_daily_ingestion.ps1\"" /SC DAILY /ST 06:00
+  ```
+
+  (Replace `<project-path>` with the repository's absolute path.) Equivalently, in the Task Scheduler GUI: Create Task → Trigger: Daily at a chosen time → Action: Start a program → Program: `powershell.exe` → Arguments: `-ExecutionPolicy Bypass -File "<project-path>\scripts\run_daily_ingestion.ps1"`.
+
+- **Linux/macOS (cron):** no separate wrapper is needed - add a crontab entry (`crontab -e`) that activates the venv's interpreter directly:
+
+  ```cron
+  0 6 * * * cd <project-path> && .venv/bin/python -m src.run_daily_ingestion >> logs/cron.log 2>&1
+  ```
+
+Verified by running `scripts/run_daily_ingestion.ps1` directly (exit code 0): it fetched and processed all 12 current-season clubs in one pass, correctly idempotent on a rerun with no new results since the prior run.
+
 ## 6. Error Handling & Resilience
 
 - **Retries**: transient network failures are retried with exponential backoff up to a configured maximum (see `config/config.example.yaml`).
