@@ -25,7 +25,7 @@ from sqlalchemy import or_, select
 from src.analysis.elo import EloConfig, compute_elo_history
 from src.analysis.form import compute_form_guides_for_season
 from src.analysis.standings import compute_league_table, get_played_matches
-from src.database.models import Match, Season, Team
+from src.database.models import IngestionLog, Match, Season, Team
 from src.database.session import session_scope
 
 _CACHE_TTL_SECONDS = 60
@@ -397,3 +397,70 @@ def get_head_to_head(team_a_id: int, team_b_id: int) -> dict[str, Any]:
             "team_b_goals": team_b_goals,
             "recent_meetings": pd.DataFrame(list(reversed(recent_rows))[:10]),
         }
+
+
+@st.cache_data(ttl=_CACHE_TTL_SECONDS)
+def list_recent_ingestion_logs(limit: int = 50) -> pd.DataFrame:
+    """Recent ingestion_log rows, most recent first (see
+    docs/visualisation_plan.md section 3.6, "Data Quality / Admin Page")."""
+    with session_scope() as session:
+        logs = session.scalars(
+            select(IngestionLog).order_by(IngestionLog.log_id.desc()).limit(limit)
+        ).all()
+        return pd.DataFrame(
+            [
+                {
+                    "Source": log.source,
+                    "Status": log.status,
+                    "Started": log.run_started_at,
+                    "Finished": log.run_finished_at,
+                    "Fetched": log.records_fetched,
+                    "Loaded": log.records_loaded,
+                    "Notes": log.notes,
+                }
+                for log in logs
+            ]
+        )
+
+
+@st.cache_data(ttl=_CACHE_TTL_SECONDS)
+def get_match_status_counts() -> pd.DataFrame:
+    """Count of matches by status per season - a sanity check for rows
+    stuck as "scheduled" long after their date should have produced a
+    result (see docs/visualisation_plan.md section 3.6)."""
+    with session_scope() as session:
+        seasons = session.scalars(select(Season).order_by(Season.start_date)).all()
+        rows = []
+        for season in seasons:
+            matches = session.scalars(
+                select(Match).where(Match.season_id == season.season_id)
+            ).all()
+            counts: dict[str, int] = {}
+            for m in matches:
+                counts[m.status] = counts.get(m.status, 0) + 1
+            for status, count in counts.items():
+                rows.append({"Season": season.label, "Status": status, "Count": count})
+    return pd.DataFrame(rows)
+
+
+@st.cache_data(ttl=_CACHE_TTL_SECONDS)
+def get_stuck_scheduled_matches(*, as_of: dt.date | None = None) -> pd.DataFrame:
+    """Matches still marked "scheduled" more than a week after their date -
+    a likely sign a source stopped updating a fixture's result."""
+    today = as_of or dt.datetime.now(dt.UTC).date()
+    cutoff = today - dt.timedelta(days=7)
+    with session_scope() as session:
+        matches = session.scalars(
+            select(Match).where(Match.status == "scheduled", Match.match_date < cutoff)
+        ).all()
+        return pd.DataFrame(
+            [
+                {
+                    "Date": m.match_date,
+                    "Home": m.home_team.name,
+                    "Away": m.away_team.name,
+                    "Source": m.source,
+                }
+                for m in matches
+            ]
+        )
