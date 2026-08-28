@@ -21,7 +21,7 @@ This roadmap sequences implementation into phases. It reflects planning intent a
 ## Phase 2 — Enhancements
 
 - [x] `src/ingestion/`: SPFL official-site fetcher for current-season live results; source-priority conflict resolution.
-- [ ] `src/analysis/`: Elo rating model and expected-points model, with back-testing against historical seasons.
+- [x] `src/analysis/`: Elo rating model and expected-points model, with back-testing against historical seasons.
 - [ ] `src/dashboard/`: Match Explorer, Trends & Analytics, and Head-to-Head pages.
 - [ ] Data Quality / Admin page backed by `ingestion_log`.
 - [ ] Scheduled local ingestion (cron / Task Scheduler) documented and configured.
