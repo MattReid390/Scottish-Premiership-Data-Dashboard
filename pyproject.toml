@@ -20,3 +20,20 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["src"]
+omit = [
+    # Smoke-tested (see tests/ui/), not line-coverage-tracked, per
+    # docs/testing_strategy.md section 5.
+    "src/dashboard/*",
+    # Thin CLI entry points: argparse plumbing over already-tested
+    # functions, plus live network calls docs/testing_strategy.md section
+    # 5 explicitly excludes from the ingestion coverage target ("live
+    # network calls excluded").
+    "src/ingestion/backfill_historical.py",
+    "src/ingestion/fetch_spfl_current_season.py",
+    "src/processing/run_pipeline.py",
+    "src/processing/run_spfl_pipeline.py",
+    "src/run_daily_ingestion.py",
+    # A validation report script, not an automated test gate - see
+    # docs/analysis_methodology.md section 6.3.
+    "src/analysis/backtest_ratings.py",
+]

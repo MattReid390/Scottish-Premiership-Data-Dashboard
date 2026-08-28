@@ -13,6 +13,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
+import streamlit as st
 from sqlalchemy.orm import Session
 
 from src.database.models import Base
@@ -42,12 +43,20 @@ def isolated_database(
     resolves to when called with no explicit URL, i.e. what application
     code under test actually uses - at an isolated, schema-initialised
     temp SQLite file. For integration tests exercising code (like
-    src.processing.pipeline) that opens its own sessions internally."""
+    src.processing.pipeline) that opens its own sessions internally.
+
+    Also clears st.cache_data: it's a process-wide cache keyed only on
+    function name/args, with no awareness that DATABASE_URL changed
+    between tests - confirmed to leak a previous test's (or the developer's
+    local) query results into this one otherwise (see
+    docs/testing_strategy.md section 3.3)."""
     url = f"sqlite:///{tmp_path / 'integration_test.db'}"
     monkeypatch.setenv("DATABASE_URL", url)
     engine = get_engine(url)
     Base.metadata.create_all(engine)
+    st.cache_data.clear()
     try:
         yield
     finally:
         engine.dispose()
+        st.cache_data.clear()

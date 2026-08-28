@@ -80,16 +80,18 @@ Distinct from unit tests on parsing logic: these assert properties of the **data
 
 Coverage is a guardrail, not a goal in itself — tests are written to validate documented behaviour (this document and [analysis_methodology.md](analysis_methodology.md)) first.
 
-## 6. Continuous Integration (Planned)
+## 6. Continuous Integration
 
-A GitHub Actions workflow is planned (not included in this documentation-only blueprint) to run on every pull request:
+Implemented in `.github/workflows/ci.yml` (Phase 2; see docs/roadmap.md), running on every pull request and every push to `main`:
 
 1. Install dependencies (`requirements.txt` + `requirements-dev.txt`).
-2. Run linting/formatting checks.
+2. Run linting/formatting checks (`ruff check .`, `black --check .`, `mypy src tests`).
 3. Run `pytest` (unit + integration + UI smoke tests) with coverage reporting.
-4. Fail the build if coverage drops below the targets in §5 or any test fails.
+4. Fail the build if coverage drops below 80% overall or any check fails (`--cov-fail-under=80`, matching the "Overall project" target in §5).
 
-This is documented here as the intended CI contract; the actual workflow definition will be added once the corresponding source modules exist.
+**Coverage, as actually achieved:** 90% overall (`[tool.coverage.run]` in `pyproject.toml`), against an `omit` list of `src/dashboard/*` (smoke-tested per §5, not line-coverage-tracked), the thin CLI entry points (`backfill_historical.py`, `fetch_spfl_current_season.py`, `run_pipeline.py`, `run_spfl_pipeline.py`, `run_daily_ingestion.py` - argparse plumbing over already-tested functions, live-network-dependent), and `backtest_ratings.py` (a validation report script per §6.3 above, not an automated test gate). `src/processing/` and `src/analysis/` sit at 90%+ per file except `team_aliases.py` (94%) and `normalize.py` (90%) - meeting the "core logic" target in §5. The two ingestion fetchers (`football_data_co_uk.py`, `spfl.py`) sit at 60% and 50% respectively rather than the §5 target of 70%: every pure/parseable function in both is tested, but neither is omitted, so the actual HTTP-calling functions - deliberately untested per §5's "live network calls excluded" - pull the file's raw percentage below the numeric target even though the *tested* logic's coverage is complete. Closing that gap would mean either mocking HTTP end-to-end (a new dependency and test-design shift not yet undertaken) or omitting the files outright (losing the incentive to keep adding pure-logic tests as these fetchers grow); left as a known, documented gap rather than force-fit.
+
+Verified locally before this workflow was added: the full suite passes with `.env` and `config/config.yaml` removed (both gitignored - CI won't have them either), confirming no hidden dependency on local, uncommitted configuration. `config/team_aliases.yaml` is real, committed, version-controlled data (see docs/environment_configuration.md section 6), not a secret, so it's present in CI like any other checked-out file.
 
 ## 7. Regression Testing
 

@@ -25,7 +25,7 @@ This roadmap sequences implementation into phases. It reflects planning intent a
 - [x] `src/dashboard/`: Match Explorer, Trends & Analytics, and Head-to-Head pages.
 - [x] Data Quality / Admin page backed by `ingestion_log`.
 - [x] Scheduled local ingestion (cron / Task Scheduler) documented and configured.
-- [ ] GitHub Actions CI workflow (lint + test, per [testing_strategy.md](testing_strategy.md#6-continuous-integration-planned)).
+- [x] GitHub Actions CI workflow (lint + test, per [testing_strategy.md](testing_strategy.md#6-continuous-integration)).
 
 ## Phase 3 — Stretch Goals
 

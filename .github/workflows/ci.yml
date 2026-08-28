@@ -1,0 +1,46 @@
+name: CI
+
+# Runs on every pull request and every push to main. See
+# docs/testing_strategy.md section 6 for the documented contract this
+# implements: install -> lint/format/type-check -> test with coverage,
+# failing the build on any check failure or a coverage drop below target.
+#
+# The test suite is hermetic - no .env or config/config.yaml required
+# (both are gitignored; tests pass explicit config or use isolated temp
+# databases instead), and no live network calls (verified by running the
+# full suite locally with .env/config.yaml removed before adding this
+# workflow). config/team_aliases.yaml is real, version-controlled data
+# checked out from the repo like any other file, not a secret.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Format check (black)
+        run: black --check .
+
+      - name: Type check (mypy)
+        run: mypy src tests
+
+      - name: Test with coverage
+        run: pytest --cov --cov-report=term-missing --cov-fail-under=80
