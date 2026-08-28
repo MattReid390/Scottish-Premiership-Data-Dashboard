@@ -15,6 +15,8 @@ Standard football league scoring is applied to every `played` match in a season:
 ### 2.2 Point-in-time reconstruction
 The league table engine can compute the standings **as they stood after any given matchweek**, not just the current snapshot, by filtering `match` to `matchweek <= N AND status = 'played'` before aggregating. This is what populates `team_season_stats.matchweek` and powers the "table progression" trend view (§5).
 
+**Implementation status (Phase 1):** football-data.co.uk — the only source ingested so far — doesn't supply round/matchday numbers, so `match.matchweek` is `NULL` for all rows it loads. `src/analysis/standings.py` therefore implements this as `as_of_date` (a date cutoff) rather than `as_of_matchweek`, verified to correctly zero out an unstarted season and reflect a single played match the day after. An `as_of_matchweek` variant can be added once a source that supplies matchweek is ingested (Phase 2).
+
 ### 2.3 Known simplifications
 - Official SPFL tiebreaker rules (which may include head-to-head results/points in some competition phases, e.g. the post-split fixtures) are approximated by goal difference/goals-for; any divergence from the official published table on edge-case ties is a documented limitation, not a bug.
 - The Scottish Premiership's mid-season "split" (top-six/bottom-six after 33 matches) is treated as a configurable rule: matchweek numbering and table computation account for the split once fixture data indicates it has occurred, per season configuration in `config/config.yaml`.
